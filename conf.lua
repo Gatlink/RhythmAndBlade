@@ -1,3 +1,5 @@
 function love.conf(t)
-	t.console = false
+	love.filesystem.setIdentity('saves')
+
+	t.console = true
 end

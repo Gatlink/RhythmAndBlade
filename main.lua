@@ -1,9 +1,10 @@
+local Editor = require('Editor')
 local Rail = require('Rail')
 local RailEditor = require('RailEditor')
 
 function love.load()
 	love.graphics.setBackgroundColor(50, 50, 50)
-	Rail.new(400, 300)
+	Editor.load()
 end
 
 function love.update(dt)
@@ -35,4 +36,6 @@ function love.keypressed(key)
 	if key == 'escape' then
 		love.event.quit()
 	end
+
+	Editor.keypressed(key)
 end

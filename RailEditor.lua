@@ -1,20 +1,39 @@
+local Point = require('Point')
 local Rail = require('Rail')
 
 local RailEditor = {}
 
 local POINT_RADIUS = 5
 
-local movingIndex
-local movingPointIndex
+local selectedIndex
+local selectedPointIndex
+local dragging = false
+
+local addPoint = function (x, y)
+	local rail = Rail.all[selectedIndex]
+	local point = rail.points[selectedPointIndex]
+	
+	local newIndex = point.x > x and selectedPointIndex or selectedPointIndex + 1
+	
+	table.insert(rail.points, newIndex, Point.new(x, y))
+	selectedPointIndex = newIndex
+end
+
+-- LOVE CALLBACKS --
 
 RailEditor.update = function (dt)
 	
 end
 
 RailEditor.draw = function ()
-	for _, rail in ipairs(Rail.all) do
-		love.graphics.setColor(150, 218, 254)
-		for _, point in ipairs(rail.points) do
+	for i, rail in ipairs(Rail.all) do
+		for j, point in ipairs(rail.points) do
+			if i == selectedIndex and j == selectedPointIndex then
+				love.graphics.setColor(140, 194, 107)
+			else
+				love.graphics.setColor(150, 218, 254)
+			end
+
 			love.graphics.circle("line", point.x, point.y, POINT_RADIUS)
 		end
 	end
@@ -25,21 +44,29 @@ RailEditor.mousepressed = function (x, y, button)
 		return
 	end
 
-	movingIndex = nil
-	movingPointIndex = nil
+	local newIndex = nil
+	local newPointIndex = nil
 	for i, rail in ipairs(Rail.all) do
 		for j, point in ipairs(rail.points) do
 			if point:sqrdistance(x, y) <= POINT_RADIUS^2 then
-				movingIndex = i
-				movingPointIndex = j
+				newIndex = i
+				newPointIndex = j
+				dragging = true
 			end
 		end
+	end
+
+	if newIndex == nil and selectedIndex ~= nil and love.keyboard.isDown('lshift') then
+		addPoint(x, y)
+	else
+		selectedIndex = newIndex
+		selectedPointIndex = newPointIndex
 	end
 end
 
 RailEditor.mousemoved = function (dx, dy)
-	if movingIndex ~= nil then
-		Rail.all[movingIndex].points[movingPointIndex]:move(dx, dy)
+	if selectedIndex ~= nil and dragging then
+		Rail.all[selectedIndex].points[selectedPointIndex]:move(dx, dy)
 	end
 end
 
@@ -48,8 +75,7 @@ RailEditor.mousereleased = function (x, y, button)
 		return
 	end
 
-	movingIndex = nil
-	movingPointIndex = nil
+	dragging = false
 end
 
 return RailEditor

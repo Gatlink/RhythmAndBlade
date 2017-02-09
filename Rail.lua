@@ -10,7 +10,7 @@ Rail.all = {}
 Rail.new = function (x, y)
 	local halfSize = DEFAULT_SIZE * 0.5
 	local new = {}
-	new.points = {
+	new.points = type(x) == 'table' and x or {
 		Point.new(x - halfSize, y),
 		Point.new(x + halfSize, y),
 	}
@@ -18,6 +18,20 @@ Rail.new = function (x, y)
 	table.insert(Rail.all, new)
 	setmetatable(new, Rail)
 	return new
+end
+
+Rail.deserialize = function (data)
+	local points = {}
+
+	for x, y in string.gmatch(data, '(%d+),(%d+);') do
+		if x ~= nil and y ~= nil then
+			table.insert(points, Point.new(x, y))
+		end
+	end
+
+	if # points > 0 then
+		Rail.new(points)
+	end
 end
 
 Rail.draw = function (self)
@@ -38,6 +52,16 @@ Rail.move = function (self, x, y)
 		point.x = point.x + x
 		point.y = point.y + y
 	end
+end
+
+Rail.serialize = function (self, x, y)
+	local data = ''
+
+	for _, point in ipairs(self.points) do
+		data = data .. point.x .. ',' .. point.y .. ';'
+	end
+
+	return data
 end
 
 return Rail
