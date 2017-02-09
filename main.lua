@@ -1,34 +1,34 @@
-local Ground = require('Ground')
-local GroundEditor = require('GroundEditor')
+local Rail = require('Rail')
+local RailEditor = require('RailEditor')
 
 function love.load()
 	love.graphics.setBackgroundColor(50, 50, 50)
-	Ground.new(400, 300)
+	Rail.new(400, 300)
 end
 
 function love.update(dt)
-	GroundEditor.update(dt)
+	RailEditor.update(dt)
 end
 
 function love.draw()
 	love.graphics.setColor(155, 155, 155)
-	for _, ground in ipairs(Ground.all) do
-		ground:draw()
+	for _, Rail in ipairs(Rail.all) do
+		Rail:draw()
 	end
 
-	GroundEditor.draw()
+	RailEditor.draw()
 end
 
 function love.mousepressed(x, y, button)
-	GroundEditor.mousepressed(x, y, button)
+	RailEditor.mousepressed(x, y, button)
 end
 
 function love.mousemoved(x, y, dx, dy)
-	GroundEditor.mousemoved(dx, dy)
+	RailEditor.mousemoved(dx, dy)
 end
 
 function love.mousereleased(x, y, button)
-	GroundEditor.mousereleased(x, y, button)
+	RailEditor.mousereleased(x, y, button)
 end
 
 function love.keypressed(key)

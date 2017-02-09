@@ -1,1 +1,1 @@
-E:\LOVE\love.exe .\
+LOVE\love.exe .
