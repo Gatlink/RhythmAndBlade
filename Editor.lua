@@ -14,10 +14,17 @@ end
 
 Editor.load = function ()
 	Rail.all = {}
-	local data = love.filesystem.read('save0')
+	local data, length = love.filesystem.read('save0')
+
+	if length == 0 or data == nil then
+		return false
+	end
+
 	for line in string.gmatch(data, '(.*)\n') do
 		Rail.deserialize(line)
 	end
+
+	return true
 end
 
 -- LOVE CALLBACKS --

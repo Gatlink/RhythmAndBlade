@@ -4,7 +4,10 @@ local RailEditor = require('RailEditor')
 
 function love.load()
 	love.graphics.setBackgroundColor(50, 50, 50)
-	Editor.load()
+	
+	if not Editor.load() then
+		Rail.new(400, 300)
+	end
 end
 
 function love.update(dt)
