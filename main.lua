@@ -28,7 +28,7 @@ function love.mousepressed(x, y, button)
 end
 
 function love.mousemoved(x, y, dx, dy)
-	RailEditor.mousemoved(dx, dy)
+	RailEditor.mousemoved(x, y, dx, dy)
 end
 
 function love.mousereleased(x, y, button)

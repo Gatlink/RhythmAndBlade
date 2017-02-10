@@ -1,9 +1,10 @@
-local Point = require('Point')
+local Vector = require('Vector')
 local Rail = require('Rail')
 
 local RailEditor = {}
 
 local POINT_RADIUS = 5
+local MAX_ANGLE = 30
 
 local selectedIndex
 local selectedPointIndex
@@ -15,7 +16,7 @@ local addPoint = function (x, y)
 	
 	local newIndex = point.x > x and selectedPointIndex or selectedPointIndex + 1
 	
-	table.insert(rail.points, newIndex, Point.new(x, y))
+	table.insert(rail.points, newIndex, Vector.new(x, y))
 	selectedPointIndex = newIndex
 end
 
@@ -55,18 +56,34 @@ RailEditor.mousepressed = function (x, y, button)
 			end
 		end
 	end
-
-	if newIndex == nil and selectedIndex ~= nil and love.keyboard.isDown('lshift') then
-		addPoint(x, y)
-	else
-		selectedIndex = newIndex
-		selectedPointIndex = newPointIndex
-	end
+	
+	selectedIndex = newIndex
+	selectedPointIndex = newPointIndex
 end
 
-RailEditor.mousemoved = function (dx, dy)
+RailEditor.mousemoved = function (x, y, dx, dy)
 	if selectedIndex ~= nil and dragging then
-		Rail.all[selectedIndex].points[selectedPointIndex]:move(dx, dy)
+		local prev = Rail.all[selectedIndex].points[selectedPointIndex - 1]
+		local current = Rail.all[selectedIndex].points[selectedPointIndex]
+
+		local angle = 0
+		if prev ~= nil then
+			-- keep horizontal
+			if love.keyboard.isDown('lctrl') then
+				y = prev.y
+			else
+				-- check angle
+				local mouse = Vector.new(x, y)
+				local prevToMouse = mouse - prev
+				angle = prevToMouse:angle(Vector.right)
+				if angle > MAX_ANGLE or angle < -MAX_ANGLE then
+					local prevToCurrent = current - prev
+					x, y = (prev + prevToMouse:projectOn(prevToCurrent)):unpack()
+				end
+			end
+		end
+		
+		current:set(x, y)
 	end
 end
 

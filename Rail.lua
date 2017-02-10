@@ -1,4 +1,4 @@
-local Point = require('Point')
+local Vector = require('Vector')
 
 local Rail = {}
 Rail.__index = Rail
@@ -11,8 +11,8 @@ Rail.new = function (x, y)
 	local halfSize = DEFAULT_SIZE * 0.5
 	local new = {}
 	new.points = type(x) == 'table' and x or {
-		Point.new(x - halfSize, y),
-		Point.new(x + halfSize, y),
+		Vector.new(x - halfSize, y),
+		Vector.new(x + halfSize, y),
 	}
 
 	table.insert(Rail.all, new)
@@ -25,7 +25,7 @@ Rail.deserialize = function (data)
 
 	for x, y in string.gmatch(data, '(%d+),(%d+);') do
 		if x ~= nil and y ~= nil then
-			table.insert(points, Point.new(x, y))
+			table.insert(points, Vector.new(x, y))
 		end
 	end
 
