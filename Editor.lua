@@ -20,7 +20,7 @@ Editor.load = function ()
 		return false
 	end
 
-	for line in string.gmatch(data, '(.*)\n') do
+	for line in string.gmatch(data, '(%S+)%s') do
 		Rail.deserialize(line)
 	end
 
