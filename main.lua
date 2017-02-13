@@ -1,6 +1,12 @@
 local Editor = require('Editor')
+
 local Rail = require('Rail')
 local RailEditor = require('RailEditor')
+
+local ActorBase = require('ActorBase')
+local ActorEditor = require('ActorEditor')
+
+local actor = ActorBase.new(50, 50)
 
 function love.load()
 	love.graphics.setBackgroundColor(50, 50, 50)
@@ -12,6 +18,7 @@ end
 
 function love.update(dt)
 	RailEditor.update(dt)
+	actor:update(dt)
 end
 
 function love.draw()
@@ -20,11 +27,15 @@ function love.draw()
 		Rail:draw()
 	end
 
+	actor:draw()
+
 	RailEditor.draw()
+	ActorEditor.draw()
 end
 
 function love.mousepressed(x, y, button)
 	RailEditor.mousepressed(x, y, button)
+	ActorEditor.mousepressed(x, y, button)
 end
 
 function love.mousemoved(x, y, dx, dy)
