@@ -1,6 +1,6 @@
-local Editor = require('Editor')
-local Rail = require('Rail')
-local RailEditor = require('RailEditor')
+local Editor = require('editor/Editor')
+local Rail = require('scripts/Rail')
+local RailEditor = require('editor/RailEditor')
 
 function love.load()
 	love.graphics.setBackgroundColor(50, 50, 50)

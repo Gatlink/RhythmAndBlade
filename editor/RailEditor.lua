@@ -1,5 +1,5 @@
-local Vector = require('Vector')
-local Rail = require('Rail')
+local Vector = require('scripts/Vector')
+local Rail = require('scripts/Rail')
 
 local RailEditor = {}
 

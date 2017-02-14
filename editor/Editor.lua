@@ -1,4 +1,4 @@
-local Rail = require('Rail')
+local Rail = require('scripts/Rail')
 
 local Editor = {}
 
