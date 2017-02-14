@@ -1,4 +1,4 @@
-local ActorBase = require('ActorBase')
+local ActorBase = require('scripts/ActorBase')
 
 local ActorEditor = {}
 

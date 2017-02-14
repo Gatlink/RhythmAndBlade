@@ -3,8 +3,8 @@ local Editor = require('editor/Editor')
 local Rail = require('scripts/Rail')
 local RailEditor = require('editor/RailEditor')
 
-local ActorBase = require('ActorBase')
-local ActorEditor = require('ActorEditor')
+local ActorBase = require('scripts/ActorBase')
+local ActorEditor = require('editor/ActorEditor')
 
 local actor = ActorBase.new(50, 50)
 

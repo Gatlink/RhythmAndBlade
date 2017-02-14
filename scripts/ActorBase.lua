@@ -1,4 +1,4 @@
-local Vector = require('Vector')
+local Vector = require('scripts/Vector')
 
 local ActorBase = {}
 ActorBase.__index = ActorBase
