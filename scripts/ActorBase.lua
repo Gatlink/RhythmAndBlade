@@ -18,9 +18,16 @@ ActorBase.new = function (x, y)
 	return new
 end
 
+-- Utility
+
+ActorBase.move = function (self, dx, dy)
+	self.position:add_inplace(dx, dy)
+	self.railConnector:add_inplace(dx, dy)
+end
+
 -- ACTIONS
 
-ActorBase.move = function (self, direction)
+ActorBase.moveAction = function (self, direction)
 	-- direction: -1 <- 0 -> 1
 end
 

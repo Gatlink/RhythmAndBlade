@@ -23,8 +23,8 @@ end
 
 function love.draw()
 	love.graphics.setColor(155, 155, 155)
-	for _, Rail in ipairs(Rail.all) do
-		Rail:draw()
+	for _, rail in ipairs(Rail.all) do
+		rail:draw()
 	end
 
 	actor:draw()
@@ -40,10 +40,12 @@ end
 
 function love.mousemoved(x, y, dx, dy)
 	RailEditor.mousemoved(x, y, dx, dy)
+	ActorEditor.mousemoved(x, y, dx, dy)
 end
 
 function love.mousereleased(x, y, button)
 	RailEditor.mousereleased(x, y, button)
+	ActorEditor.mousereleased(x, y, button)
 end
 
 function love.keypressed(key)
@@ -53,4 +55,5 @@ function love.keypressed(key)
 
 	Editor.keypressed(key)
 	RailEditor.keypressed(key)
+	ActorEditor.keypressed(key)
 end

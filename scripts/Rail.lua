@@ -25,13 +25,32 @@ Rail.deserialize = function (data)
 
 	for x, y in string.gmatch(data, '(%d+),(%d+);') do
 		if x ~= nil and y ~= nil then
-			table.insert(points, Vector.new(x, y))
+			table.insert(points, Vector.new(tonumber(x), tonumber(y)))
 		end
 	end
 
 	if # points > 0 then
 		Rail.new(points)
 	end
+end
+
+Rail.getRailProjection = function (pos)
+	local points = {}
+	for _, rail in ipairs(Rail.all) do
+		table.insert(points, rail:getClosestPointOnRail(pos))
+	end
+
+	local point
+	local lastDis = math.huge
+	for _, p in ipairs(points) do
+		local curDis = p:sqrdistance(pos)
+		if p.y >= pos.y and curDis < lastDis then
+			point = p
+			lastDis = curDis
+		end
+	end
+
+	return point
 end
 
 Rail.draw = function (self)
@@ -62,6 +81,38 @@ Rail.serialize = function (self, x, y)
 	end
 
 	return data
+end
+
+Rail.getClosestPointOnRail = function (self, pos)
+	if # self.points < 2 then
+		return nil
+	end
+
+	local points = {}
+	for i=1, # self.points - 1 do
+		local prev, next = self.points[i], self.points[i + 1]
+		-- print("prev.x: " .. type(prev.x))
+		-- print("next.x: " .. type(next.x))
+		-- print("pos.x: " .. type(pos.x))
+		if (prev.x <= pos.x and next.x >= pos.x)
+		or (prev.x >= pos.x and next.x <= pos.x) then
+			local prevToNext = next - prev
+			local prevToPos = pos - prev
+			table.insert(points, prevToPos:projectOn(prevToNext) + prev)
+		end
+	end
+
+	local closest
+	local lastSqrDistance = math.huge
+	for _, point in ipairs(points) do
+		local currentSqrDistance = point:sqrdistance(pos)
+		if closest == nil or currentSqrDistance < lastSqrDistance then
+			closest = point
+			lastSqrDistance = currentSqrDistance
+		end
+	end
+
+	return closest
 end
 
 return Rail
