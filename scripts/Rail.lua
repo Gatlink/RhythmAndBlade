@@ -91,9 +91,6 @@ Rail.getClosestPointOnRail = function (self, pos)
 	local points = {}
 	for i=1, # self.points - 1 do
 		local prev, next = self.points[i], self.points[i + 1]
-		-- print("prev.x: " .. type(prev.x))
-		-- print("next.x: " .. type(next.x))
-		-- print("pos.x: " .. type(pos.x))
 		if (prev.x <= pos.x and next.x >= pos.x)
 		or (prev.x >= pos.x and next.x <= pos.x) then
 			local prevToNext = next - prev
