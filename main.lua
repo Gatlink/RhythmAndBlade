@@ -49,7 +49,7 @@ function love.mousereleased(x, y, button)
 end
 
 function love.keypressed(key)
-	if key == 'f4' and love.keyboard.isDown('lalt') or love.keyboard.isDown('ralt') then
+	if key == 'f4' and (love.keyboard.isDown('lalt') or love.keyboard.isDown('ralt')) then
 		love.event.quit()
 	end
 
