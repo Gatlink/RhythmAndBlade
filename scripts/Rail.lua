@@ -93,9 +93,9 @@ Rail.getClosestPointOnRail = function (self, pos)
 		local prev, next = self.points[i], self.points[i + 1]
 		if (prev.x <= pos.x and next.x >= pos.x)
 		or (prev.x >= pos.x and next.x <= pos.x) then
-			local prevToNext = next - prev
-			local prevToPos = pos - prev
-			table.insert(points, prevToPos:projectOn(prevToNext) + prev)
+			local a = (next.y - prev.y) / (next.x - prev.x)
+			local b = next.y - a * next.x
+			table.insert(points, Vector.new(pos.x, a * pos.x + b))
 		end
 	end
 
