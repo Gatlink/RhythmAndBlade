@@ -5,8 +5,8 @@ local ActorBase = {}
 ActorBase.__index = ActorBase
 
 local DEFAULT_RADIUS = 10
-local RAIL_ATTRACTION = 3
-local MAX_DOWNWARD_SPEED = 100
+local DOWNWARD_MAX_SPEED = 100
+local HORIZONTAL_MAX_SPEED = 150
 
 ActorBase.all = {}
 
@@ -39,26 +39,13 @@ ActorBase.toggleActiveControllers = function (self)
 	end
 end
 
--- ACTIONS
+-- LOVE CALLBACKS
 
-ActorBase.fall = function (self, gravity)
-	local railProj = Rail.getRailProjection(self.position)
-	if self.railConnector:sqrdistance(railProj) <= RAIL_ATTRACTION^2 then
-		local delta = railProj - self.railConnector
-		self:move(delta:unpack())
-		self.acceleration.y = 0
-		self.velocity.y = 0
-		grounded = true
-	else
-		grounded = false
-	end
-
-	if not grounded then
-		self.acceleration:add_inplace(0, gravity)
+ActorBase.load = function (self)
+	for _, controller in ipairs(self.controllers) do
+		controller:load(self)
 	end
 end
-
--- LOVE CALLBACKS
 
 ActorBase.update = function (self, dt)
 	-- Controllers
@@ -70,7 +57,13 @@ ActorBase.update = function (self, dt)
 	self.velocity = self.velocity + self.acceleration * dt
 
 	if self.velocity.y > 0 then
-		self.velocity.y = math.min(self.velocity.y, MAX_DOWNWARD_SPEED)
+		self.velocity.y = math.min(self.velocity.y, DOWNWARD_MAX_SPEED)
+	end
+
+	if self.velocity.x > 0 then
+		self.velocity.x = math.min(math.max(self.velocity.x, 0), HORIZONTAL_MAX_SPEED)
+	elseif self.velocity.x < 0 then
+		self.velocity.x = math.max(math.min(self.velocity.x, 0), -HORIZONTAL_MAX_SPEED)
 	end
 
 	self:move((self.velocity * dt):unpack())

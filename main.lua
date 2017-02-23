@@ -7,6 +7,7 @@ local ActorBase = require('scripts/ActorBase')
 local ActorEditor = require('editor/ActorEditor')
 
 local Gravity = require('scripts/controllers/Gravity')
+local GamePad = require('scripts/controllers/GamePad')
 
 local actor
 
@@ -19,6 +20,9 @@ function love.load()
 
 	actor = ActorBase.new(50, 50)
 	table.insert(actor.controllers, Gravity)
+	table.insert(actor.controllers, GamePad)
+
+	actor:load()
 end
 
 function love.update(dt)
