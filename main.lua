@@ -6,7 +6,9 @@ local RailEditor = require('editor/RailEditor')
 local ActorBase = require('scripts/ActorBase')
 local ActorEditor = require('editor/ActorEditor')
 
-local actor = ActorBase.new(50, 50)
+local Gravity = require('scripts/controllers/Gravity')
+
+local actor
 
 function love.load()
 	love.graphics.setBackgroundColor(50, 50, 50)
@@ -14,6 +16,9 @@ function love.load()
 	if not Editor.load() then
 		Rail.new(400, 300)
 	end
+
+	actor = ActorBase.new(50, 50)
+	table.insert(actor.controllers, Gravity)
 end
 
 function love.update(dt)

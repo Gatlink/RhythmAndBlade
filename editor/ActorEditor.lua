@@ -35,6 +35,8 @@ ActorEditor.mousepressed = function (x, y, button)
 		if actor.position:sqrdistance(x, y) <= actor.radius^2 then
 			selected = actor
 			dragging = true
+			selected:toggleActiveControllers()
+			break
 		end
 	end
 end
@@ -48,6 +50,10 @@ end
 ActorEditor.mousereleased = function (x, y, button)
 	if button == 1 then
 		dragging = nil
+
+		if selected ~= nil then
+			selected:toggleActiveControllers()
+		end
 	end
 end
 
