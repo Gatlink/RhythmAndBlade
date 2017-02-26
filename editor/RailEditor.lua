@@ -45,6 +45,23 @@ RailEditor.draw = function ()
 		for j, point in ipairs(rail.points) do
 			if i == selectedIndex and (j == selectedPointIndex or railSelected) then
 				love.graphics.setColor(140, 194, 107)
+				if rail.points[j + 1] ~= nil then
+					local point_current = rail.points[j]
+					local point_next = rail.points[j + 1]
+					local point_prev = rail.points[j - 1]
+					-- compare to horizontal if no previous point
+					if point_prev == nil then
+						point_prev = rail.points[j]:clone()
+						point_prev.x = 0
+
+					end
+					local curToNext = point_next - point_current
+					local prevToCur = point_current - point_prev
+					local vector_prev = Vector.new(prevToCur.x, prevToCur.y)	
+					local vector_next = Vector.new(curToNext.x, curToNext.y)
+					love.graphics.print(string.format("%d", vector_prev:angle(vector_next)), point.x, point.y)
+					
+				end
 			else
 				love.graphics.setColor(150, 218, 254)
 			end
