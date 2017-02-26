@@ -125,6 +125,18 @@ function Vector:sqrdistance(x, y)
 	return (self - oth):sqrNorm()
 end
 
+function Vector:slope(oth)
+	local A, B = self, oth
+	if A.x < B.x then
+		A, B = B, A
+	end
+
+	local AB = B - A
+	local angle = (Vector.left:angle(AB) + 360) % 360
+
+	return angle > 90 and 360 - angle or angle
+end
+
 Vector.zero = Vector.new()
 Vector.up = Vector.new(0, -1)
 Vector.down = Vector.new(0, 1)

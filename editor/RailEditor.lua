@@ -3,12 +3,13 @@ local Rail = require('scripts/Rail')
 
 local RailEditor = {}
 
-local POINT_MIN_DISTANCE = 50
 local POINT_RADIUS = 5
 local MAX_ANGLE = 30
 
-local HORIZONTAL_KEY = "lctrl"
-local WALL_KEY = "lshift"
+local HORIZONTAL_KEY_LEFT = "lctrl"
+local HORIZONTAL_KEY_RIGHT = "rctrl"
+local WALL_KEY_LEFT = "lshift"
+local WALL_KEY_RIGHT = "rshift"
 local DELETE_KEY = "delete"
 local ADD_POINT_KEY = "space"
 local ADD_RAIL_KEY = "lalt"
@@ -19,6 +20,8 @@ local selectedIndex
 local selectedPointIndex
 local dragging = false
 local railSelected = false
+
+-- UTILS
 
 local addPoint = function (x, y)
 	local rail = Rail.all[selectedIndex]
@@ -34,6 +37,13 @@ local isSmthgSelected = function ()
 	return selectedIndex ~= nil and selectedPointIndex ~= nil
 end
 
+local slope = function (A, B)
+	local angle = A:slope(B)
+	local AB = B - A
+	local pos = A + AB * 0.5
+	love.graphics.print(string.format("%d°", angle), pos.x, pos.y - 20)
+end
+
 -- LOVE CALLBACKS --
 
 RailEditor.update = function (dt)
@@ -45,23 +55,13 @@ RailEditor.draw = function ()
 		for j, point in ipairs(rail.points) do
 			if i == selectedIndex and (j == selectedPointIndex or railSelected) then
 				love.graphics.setColor(140, 194, 107)
-				if rail.points[j + 1] ~= nil then
-					local point_current = rail.points[j]
-					local point_next = rail.points[j + 1]
-					local point_prev = rail.points[j - 1]
-					-- compare to horizontal if no previous point
-					if point_prev == nil then
-						point_prev = rail.points[j]:clone()
-						point_prev.x = 0
+				
+				local current = rail.points[j]
+				local prev = rail.points[j - 1]
+				local next = rail.points[j + 1]
 
-					end
-					local curToNext = point_next - point_current
-					local prevToCur = point_current - point_prev
-					local vector_prev = Vector.new(prevToCur.x, prevToCur.y)	
-					local vector_next = Vector.new(curToNext.x, curToNext.y)
-					love.graphics.print(string.format("%d", vector_prev:angle(vector_next)), point.x, point.y)
-					
-				end
+				if prev ~= nil then slope(current, prev) end
+				if next ~= nil then slope(current, next) end
 			else
 				love.graphics.setColor(150, 218, 254)
 			end
@@ -127,30 +127,17 @@ RailEditor.mousemoved = function (x, y, dx, dy)
 		end
 
 		-- keep horizontal
-		if love.keyboard.isDown(HORIZONTAL_KEY) then
-			if prev ~= nil then
-				y = prev.y
-			elseif next ~= nil then
-				y = next.y
-			end		
-		end
-
-		-- don't mess the order
-		if prev ~= nil then
-			x = math.max(prev.x + POINT_MIN_DISTANCE, x)
-		end
-
-		if next ~= nil then
-			x = math.min(next.x - POINT_MIN_DISTANCE, x)
+		if love.keyboard.isDown(HORIZONTAL_KEY_LEFT) and prev ~= nil then
+			y = prev.y
+		elseif love.keyboard.isDown(HORIZONTAL_KEY_RIGHT) and next ~= nil then
+			y = next.y
 		end
 
 		-- Wall
-		if love.keyboard.isDown(WALL_KEY) then
-			if prev ~= nil then
-				x = prev.x
-			elseif next ~= nil then
-				x = next.x
-			end
+		if love.keyboard.isDown(WALL_KEY_LEFT) and prev ~= nil then
+			x = prev.x
+		elseif love.keyboard.isDown(WALL_KEY_RIGHT) and next ~= nil then
+			x = next.x
 		end
 
 		current:set(x, y)
@@ -174,7 +161,7 @@ RailEditor.keypressed = function (key)
 		if next ~= nil then
 			x, y = (current.x + next.x) * 0.5, (current.y + next.y) * 0.5
 		else
-			x, y = current.x + POINT_MIN_DISTANCE * 2, current.y
+			x, y = current.x + 50 * 2, current.y
 		end
 		
 		selectedPointIndex = selectedPointIndex + 1
