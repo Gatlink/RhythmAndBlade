@@ -4,7 +4,7 @@ local Rail = require('scripts/Rail')
 local Gravity = ControllerBase.new()
 
 local RAIL_ATTRACTION = 3
-local G = 9.81
+local g = 9.81
 local MASS = 10
 
 Gravity.update = function (self, actor)
@@ -27,7 +27,7 @@ Gravity.update = function (self, actor)
 	end
 
 	if not grounded then
-		actor.acceleration.y = G * MASS
+		actor.acceleration.y = g * MASS
 	end
 end
 
