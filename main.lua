@@ -8,6 +8,9 @@ local ActorEditor = require('editor/ActorEditor')
 
 local Gravity = require('scripts/controllers/Gravity')
 local GamePad = require('scripts/controllers/GamePad')
+local Keyboard = require('scripts/controllers/Keyboard')
+
+local Camera = require('scripts/Camera')
 
 local actor
 
@@ -26,11 +29,17 @@ function love.load()
 end
 
 function love.update(dt)
+	Camera:update(dt)
+
 	RailEditor.update(dt)
+
 	actor:update(dt)
 end
 
 function love.draw()
+	Camera:draw()
+	Camera:preDraw()
+
 	love.graphics.setColor(155, 155, 155)
 	for _, rail in ipairs(Rail.all) do
 		rail:draw()
@@ -40,6 +49,8 @@ function love.draw()
 
 	RailEditor.draw()
 	ActorEditor.draw()
+
+	Camera:postDraw()
 end
 
 function love.mousepressed(x, y, button)
