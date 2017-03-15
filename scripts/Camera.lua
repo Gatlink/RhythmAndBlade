@@ -6,7 +6,7 @@ table.insert(Camera.controllers, Keyboard)
 
 Camera.preDraw = function (self)
 	love.graphics.push()
-	love.graphics.translate(self.position:unpack())
+	love.graphics.translate(self.position.x - 400, self.position.y - 300)
 end
 
 Camera.postDraw = function (self)
