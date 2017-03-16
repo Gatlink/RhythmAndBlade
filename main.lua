@@ -37,7 +37,6 @@ function love.update(dt)
 end
 
 function love.draw()
-	Camera:draw()
 	Camera:preDraw()
 
 	love.graphics.setColor(155, 155, 155)
@@ -50,6 +49,7 @@ function love.draw()
 	RailEditor.draw()
 	ActorEditor.draw()
 
+	Camera:draw()
 	Camera:postDraw()
 end
 

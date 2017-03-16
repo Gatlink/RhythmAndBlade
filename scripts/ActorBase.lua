@@ -5,12 +5,12 @@ local ActorBase = {}
 ActorBase.__index = ActorBase
 
 local DEFAULT_RADIUS = 10
-local DOWNWARD_MAX_SPEED = 100
+local VERTICAL_MAX_SPEED = 100
 local HORIZONTAL_MAX_SPEED = 150
 
 ActorBase.all = {}
 
-ActorBase.new = function (x, y)
+ActorBase.new = function (x, y, unlist)
 	local new = {}
 	new.position = Vector.new(x or 400, y or 300)
 	new.radius = DEFAULT_RADIUS
@@ -18,11 +18,17 @@ ActorBase.new = function (x, y)
 	new.grounded = false
 	new.acceleration = Vector.new()
 	new.velocity = Vector.new()
+	new.horizontalMaxSpeed = HORIZONTAL_MAX_SPEED
+	new.verticalMaxSpeed = VERTICAL_MAX_SPEED
 
 	new.controllers = {}
 
 	setmetatable(new, ActorBase)
-	table.insert(ActorBase.all, new)
+
+	if not unlist then
+		table.insert(ActorBase.all, new)
+	end
+
 	return new
 end
 
@@ -57,13 +63,15 @@ ActorBase.update = function (self, dt)
 	self.velocity = self.velocity + self.acceleration * dt
 
 	if self.velocity.y > 0 then
-		self.velocity.y = math.min(self.velocity.y, DOWNWARD_MAX_SPEED)
+		self.velocity.y = math.min(self.velocity.y, self.verticalMaxSpeed)
+	elseif self.velocity.y < 0 then
+		self.velocity.y = math.max(self.velocity.y, -self.verticalMaxSpeed)
 	end
 
 	if self.velocity.x > 0 then
-		self.velocity.x = math.min(math.max(self.velocity.x, 0), HORIZONTAL_MAX_SPEED)
+		self.velocity.x = math.min(math.max(self.velocity.x, 0), self.horizontalMaxSpeed)
 	elseif self.velocity.x < 0 then
-		self.velocity.x = math.max(math.min(self.velocity.x, 0), -HORIZONTAL_MAX_SPEED)
+		self.velocity.x = math.max(math.min(self.velocity.x, 0), -self.horizontalMaxSpeed)
 	end
 
 	self:move((self.velocity * dt):unpack())

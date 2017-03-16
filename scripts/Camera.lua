@@ -1,12 +1,15 @@
 local ActorBase = require('scripts/ActorBase')
 local Keyboard = require('scripts/controllers/Keyboard')
 
-local Camera = ActorBase.new(400, 300)
+local Camera = ActorBase.new(400, 300, true)
 table.insert(Camera.controllers, Keyboard)
+
+Camera.horizontalMaxSpeed = 300
+Camera.verticalMaxSpeed = 300
 
 Camera.preDraw = function (self)
 	love.graphics.push()
-	love.graphics.translate(self.position.x - 400, self.position.y - 300)
+	love.graphics.translate(400 - self.position.x, 300 - self.position.y)
 end
 
 Camera.postDraw = function (self)
