@@ -1,7 +1,7 @@
 ControllerBase = require('scripts/controllers/ControllerBase')
+Vector = require('scripts/Vector')
 
-local AXIS_THRESHOLD = 0.5
-local ACCELERATION = 60
+local AXIS_THRESHOLD = 0.2
 
 local GamePad = ControllerBase.new()
 local joystick
@@ -20,12 +20,12 @@ GamePad.update = function (self, actor)
 
 	local axis = joystick:getGamepadAxis("leftx")
 	local direction = axis < 0 and -1 or 1
-	if math.abs(axis) < 0.2 then
+	if math.abs(axis) < AXIS_THRESHOLD then
 		direction = 0
 		actor.velocity.x = 0
 	end
 
-	actor.acceleration.x = direction * ACCELERATION
+	actor:Move(Vector.new(direction, 0))
 end
 
 return GamePad

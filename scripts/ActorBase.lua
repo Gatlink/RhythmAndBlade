@@ -21,6 +21,10 @@ ActorBase.new = function (x, y, unlist)
 	new.horizontalMaxSpeed = HORIZONTAL_MAX_SPEED
 	new.verticalMaxSpeed = VERTICAL_MAX_SPEED
 
+	new.railAttraction = 3
+	new.mass = 10
+	new.groundAcceleration = 60
+
 	new.controllers = {}
 
 	setmetatable(new, ActorBase)
@@ -45,6 +49,29 @@ ActorBase.toggleActiveControllers = function (self)
 	end
 end
 
+-- ACTIONS
+
+ActorBase.Fall = function (self, g)
+	local railProj = Rail.getRailProjection(self.position)
+	if self.railConnector:sqrdistance(railProj) <= self.railAttraction ^ 2 then
+		local delta = railProj - self.railConnector
+		self:move(delta:unpack())
+		self.acceleration.y = 0
+		self.velocity.y = 0
+		grounded = true
+	else
+		grounded = false
+	end
+
+	if not grounded then
+		self.acceleration.y = g * self.mass
+	end
+end
+
+ActorBase.Move = function (self, direction)
+	self.acceleration = self.acceleration + direction * self.groundAcceleration
+end
+
 -- LOVE CALLBACKS
 
 ActorBase.load = function (self)
@@ -54,6 +81,8 @@ ActorBase.load = function (self)
 end
 
 ActorBase.update = function (self, dt)
+	self.acceleration:set(0, 0)
+
 	-- Controllers
 	for _, controller in ipairs(self.controllers) do
 		controller:update(self)

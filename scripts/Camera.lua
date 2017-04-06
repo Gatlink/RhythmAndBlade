@@ -6,6 +6,7 @@ table.insert(Camera.controllers, Keyboard)
 
 Camera.horizontalMaxSpeed = 300
 Camera.verticalMaxSpeed = 300
+Camera.groundAcceleration = 500
 
 Camera.preDraw = function (self)
 	love.graphics.push()
