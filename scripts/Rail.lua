@@ -20,6 +20,8 @@ Rail.new = function (x, y)
 	return new
 end
 
+-- STATIC
+
 Rail.deserialize = function (data)
 	local points = {}
 
@@ -52,6 +54,8 @@ Rail.getRailProjection = function (pos)
 
 	return point
 end
+
+-- METHOD
 
 Rail.draw = function (self)
 	love.graphics.line(self:unpackPoints())
