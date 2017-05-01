@@ -54,16 +54,19 @@ function love.draw()
 end
 
 function love.mousepressed(x, y, button)
+	x, y = Camera:translate(x, y)
 	RailEditor.mousepressed(x, y, button)
 	ActorEditor.mousepressed(x, y, button)
 end
 
 function love.mousemoved(x, y, dx, dy)
+	x, y = Camera:translate(x, y)
 	RailEditor.mousemoved(x, y, dx, dy)
 	ActorEditor.mousemoved(x, y, dx, dy)
 end
 
 function love.mousereleased(x, y, button)
+	x, y = Camera:translate(x, y)
 	RailEditor.mousereleased(x, y, button)
 	ActorEditor.mousereleased(x, y, button)
 end
