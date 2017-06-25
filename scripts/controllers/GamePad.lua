@@ -13,8 +13,8 @@ end
 
 GamePad.update = function (self, actor)
 	if not self.active or not joystick or not joystick:isGamepad() then
-		actor.acceleration.x = 0
-		actor.velocity.x = 0
+		actor.targetSpeed.x = 0
+		actor.curSpeed.x = 0
 		return
 	end
 
@@ -22,7 +22,6 @@ GamePad.update = function (self, actor)
 	local direction = axis < 0 and -1 or 1
 	if math.abs(axis) < AXIS_THRESHOLD then
 		direction = 0
-		actor.velocity.x = 0
 	end
 
 	actor:Move(Vector.new(direction, 0))
