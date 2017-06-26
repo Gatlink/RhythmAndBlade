@@ -1,10 +1,11 @@
 ControllerBase = require('scripts/controllers/ControllerBase')
 Vector = require('scripts/Vector')
 
-local AXIS_THRESHOLD = 0.2
+local AXIS_THRESHOLD = 0.5
 
 local GamePad = ControllerBase.new()
 local joystick
+local wasPressed = {}
 
 GamePad.load = function (self, actor)
 	local joysticks = love.joystick.getJoysticks()
@@ -24,7 +25,14 @@ GamePad.update = function (self, actor)
 		direction = 0
 	end
 
-	actor:Move(Vector.new(direction, 0))
+	actor:move(Vector.new(direction, 0))
+
+	local isJumpDown = joystick:isDown(1)
+	local justPressedJump = isJumpDown and not wasPressed[1]
+	if actor.grounded and justPressedJump then
+		actor:jump()
+	end
+	wasPressed[1] = isJumpDown
 end
 
 return GamePad

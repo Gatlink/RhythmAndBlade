@@ -29,7 +29,7 @@ Keyboard.update = function (self, actor)
 	if direction.x == 0 then actor.curSpeed.x = 0 end
 	if direction.y == 0 then actor.curSpeed.y = 0 end
 
-	actor:Move(direction)
+	actor:move(direction)
 end
 
 return Keyboard

@@ -13,7 +13,7 @@ Gravity.update = function (self, actor)
 		return
 	end
 
-	actor:Fall();
+	actor:fall();
 end
 
 return Gravity

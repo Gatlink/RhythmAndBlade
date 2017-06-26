@@ -7,6 +7,7 @@ table.insert(Camera.controllers, Keyboard)
 
 Camera.maxSpeed = Vector.new(300, 300)
 Camera.a = 1
+Camera.ignoreWalls = true
 
 Camera.getTranslation = function (self)
 	local width, height = love.graphics.getDimensions()

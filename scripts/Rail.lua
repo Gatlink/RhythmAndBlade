@@ -55,6 +55,18 @@ Rail.getRailProjection = function (pos)
 	return point
 end
 
+Rail.getAllCollidingWalls = function (pos, radius)
+	local walls = {}
+	for _, rail in ipairs(Rail.all) do
+		local collidingWalls = rail:getCollidingWalls(pos, radius) 
+		for _, wall in ipairs(collidingWalls) do
+			table.insert(walls, wall)
+		end
+	end
+
+	return walls
+end
+
 -- METHOD
 
 Rail.draw = function (self)
@@ -88,19 +100,12 @@ Rail.serialize = function (self, x, y)
 end
 
 Rail.getClosestPointOnRail = function (self, pos)
-	if # self.points < 2 then
-		return nil
-	end
+	if # self.points < 2 then return nil end
 
 	local points = {}
 	for i=1, # self.points - 1 do
-		local prev, next = self.points[i], self.points[i + 1]
-		if (prev.x <= pos.x and next.x >= pos.x)
-		or (prev.x >= pos.x and next.x <= pos.x) then
-			local a = (next.y - prev.y) / (next.x - prev.x)
-			local b = next.y - a * next.x
-			table.insert(points, Vector.new(pos.x, a * pos.x + b))
-		end
+		local proj = self:getProjection(i, pos)
+		if proj then table.insert(points, proj) end
 	end
 
 	local closest
@@ -114,6 +119,35 @@ Rail.getClosestPointOnRail = function (self, pos)
 	end
 
 	return closest
+end
+
+Rail.getProjection = function (self, idx, pos)
+	local prev, next = self.points[idx], self.points[idx + 1]
+	if not prev or not next then return nil end
+
+	if (prev.x <= pos.x and next.x >= pos.x)
+	or (prev.x >= pos.x and next.x <= pos.x) then
+		local a = (next.y - prev.y) / (next.x - prev.x)
+		local b = next.y - a * next.x
+		return Vector.new(pos.x, a * pos.x + b)
+	end
+end
+
+Rail.getCollidingWalls = function (self, pos, radius)
+	if # self.points < 2 then return nil end
+
+	local walls = {}
+	for i = 1, # self.points - 1 do
+		local prev, next = self.points[i], self.points[i + 1]
+		if prev.x == next.x
+		and prev.x > pos.x - radius and prev.x < pos.x + radius
+		and pos.y < math.max(prev.y, next.y)
+		and pos.y > math.min(prev.y, next.y) then
+			table.insert(walls, prev.x)
+		end
+	end
+
+	return walls
 end
 
 return Rail

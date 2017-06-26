@@ -43,7 +43,7 @@ end
 
 ActorEditor.mousemoved = function (x, y, dx, dy)
 	if dragging and selected ~= nil then
-		selected:move(dx, dy)
+		selected:translate(dx, dy)
 	end
 end
 
