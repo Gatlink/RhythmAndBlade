@@ -141,8 +141,8 @@ Rail.getCollidingWalls = function (self, pos, radius)
 		local prev, next = self.points[i], self.points[i + 1]
 		if prev.x == next.x
 		and prev.x > pos.x - radius and prev.x < pos.x + radius
-		and pos.y < math.max(prev.y, next.y)
-		and pos.y > math.min(prev.y, next.y) then
+		and pos.y - radius + 1 < math.max(prev.y, next.y)
+		and pos.y + radius - 1 > math.min(prev.y, next.y) then
 			table.insert(walls, prev.x)
 		end
 	end

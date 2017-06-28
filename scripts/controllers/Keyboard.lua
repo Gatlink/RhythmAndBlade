@@ -1,8 +1,6 @@
 local ControllerBase = require('scripts/controllers/ControllerBase')
 local Vector = require('scripts/Vector')
 
-local a = 500
-
 local Keyboard = ControllerBase.new()
 
 Keyboard.update = function (self, actor)
@@ -29,7 +27,7 @@ Keyboard.update = function (self, actor)
 	if direction.x == 0 then actor.curSpeed.x = 0 end
 	if direction.y == 0 then actor.curSpeed.y = 0 end
 
-	actor:move(direction)
+	actor:run(direction)
 end
 
 return Keyboard

@@ -4,6 +4,7 @@ local Rail = require('scripts/Rail')
 local ActorEditor = {}
 
 local selected
+local ignoredWalls
 local dragging = false
 
 -- LOVE CALLBACKS
@@ -35,6 +36,10 @@ ActorEditor.mousepressed = function (x, y, button)
 		if actor.position:sqrdistance(x, y) <= actor.radius^2 then
 			selected = actor
 			dragging = true
+
+			ignoredWalls = selected.ignoreWalls
+			selected.ignoreWalls = true
+			
 			selected:toggleActiveControllers()
 			break
 		end
@@ -43,7 +48,7 @@ end
 
 ActorEditor.mousemoved = function (x, y, dx, dy)
 	if dragging and selected ~= nil then
-		selected:translate(dx, dy)
+		selected:move(dx, dy)
 	end
 end
 
@@ -52,6 +57,7 @@ ActorEditor.mousereleased = function (x, y, button)
 		dragging = nil
 
 		if selected ~= nil then
+			selected.ignoreWalls = ignoredWalls
 			selected:toggleActiveControllers()
 		end
 	end

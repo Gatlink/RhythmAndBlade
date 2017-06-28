@@ -25,7 +25,7 @@ GamePad.update = function (self, actor)
 		direction = 0
 	end
 
-	actor:move(Vector.new(direction, 0))
+	actor:run(Vector.new(direction, 0))
 
 	local isJumpDown = joystick:isDown(1)
 	local justPressedJump = isJumpDown and not wasPressed[1]
