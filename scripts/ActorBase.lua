@@ -93,6 +93,10 @@ ActorBase.jump = function (self)
 	self.curSpeed.y = self.jumpImpulse
 end
 
+ActorBase.playSound = function (self, sound)
+
+end
+
 -- LOVE CALLBACKS
 
 ActorBase.load = function (self)
