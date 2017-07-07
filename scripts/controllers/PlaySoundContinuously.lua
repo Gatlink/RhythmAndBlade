@@ -1,5 +1,3 @@
-local ControllerBase = require('scripts/controllers/ControllerBase')
-
 local PlaySoundContinuously = {}
 PlaySoundContinuously.__index = PlaySoundContinuously
 setmetatable(PlaySoundContinuously, ControllerBase)
@@ -7,7 +5,7 @@ setmetatable(PlaySoundContinuously, ControllerBase)
 PlaySoundContinuously.new = function (actor)
 	local new = ControllerBase.new(actor)
 
-	new.delay = 5
+	new.delay = 3
 	new.timer = new.delay
 
 	setmetatable(new, PlaySoundContinuously)
@@ -15,10 +13,11 @@ PlaySoundContinuously.new = function (actor)
 end
 
 PlaySoundContinuously.update = function (self, dt)
-	self.delay = self.delay - dt
+	self.timer = self.timer - dt
 
-	if self.delay <= 0 then
-		self.actor:playSound()
+	if self.timer <= 0 then
+		self.actor:playSound(Sound.getRandomSound())
+		self.timer = self.delay
 	end
 end
 

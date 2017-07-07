@@ -1,6 +1,3 @@
-local ControllerBase = require('scripts/controllers/ControllerBase')
-local Rail = require('scripts/Rail')
-
 local Gravity = {}
 Gravity.__index = Gravity
 setmetatable(Gravity, ControllerBase)

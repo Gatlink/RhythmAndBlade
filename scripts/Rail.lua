@@ -1,5 +1,3 @@
-local Vector = require('scripts/Vector')
-
 local Rail = {}
 Rail.__index = Rail
 

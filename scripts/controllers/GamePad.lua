@@ -1,6 +1,3 @@
-ControllerBase = require('scripts/controllers/ControllerBase')
-Vector = require('scripts/Vector')
-
 local AXIS_THRESHOLD = 0.5
 
 local GamePad = {}

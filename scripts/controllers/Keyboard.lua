@@ -1,6 +1,3 @@
-local ControllerBase = require('scripts/controllers/ControllerBase')
-local Vector = require('scripts/Vector')
-
 local Keyboard = {}
 Keyboard.__index = Keyboard
 setmetatable(Keyboard, ControllerBase)

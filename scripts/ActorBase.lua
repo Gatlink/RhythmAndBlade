@@ -1,6 +1,3 @@
-local Vector = require('scripts/Vector')
-local Rail = require('scripts/Rail')
-
 local ActorBase = {}
 ActorBase.__index = ActorBase
 
@@ -94,7 +91,7 @@ ActorBase.jump = function (self)
 end
 
 ActorBase.playSound = function (self, type)
-	local sound = Sound.new(type, self.position:unpack())
+	Sound.new(type, self.position.x, self.position.y)
 end
 
 -- LOVE CALLBACKS
@@ -113,7 +110,7 @@ ActorBase.update = function (self, dt)
 
 	-- Controllers
 	for _, controller in ipairs(self.controllers) do
-		controller:update()
+		controller:update(dt)
 	end
 
 	-- Update

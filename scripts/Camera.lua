@@ -1,7 +1,3 @@
-local ActorBase = require('scripts/ActorBase')
-local Keyboard = require('scripts/controllers/Keyboard')
-local Vector = require('scripts/Vector')
-
 local Camera = ActorBase.new(400, 300, true)
 table.insert(Camera.controllers, Keyboard.new(Camera))
 
