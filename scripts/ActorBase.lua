@@ -93,8 +93,8 @@ ActorBase.jump = function (self)
 	self.curSpeed.y = self.jumpImpulse
 end
 
-ActorBase.playSound = function (self, sound)
-
+ActorBase.playSound = function (self, type)
+	local sound = Sound.new(type, self.position:unpack())
 end
 
 -- LOVE CALLBACKS

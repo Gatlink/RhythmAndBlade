@@ -13,6 +13,6 @@ ControllerBase.new = function (actor)
 end
 
 ControllerBase.load = function (self) end
-ControllerBase.update = function (self) end
+ControllerBase.update = function (self, dt) end
 
 return ControllerBase

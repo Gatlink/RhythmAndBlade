@@ -1,4 +1,5 @@
 local Vector = require('script/Vector')
+local Player = require('scripts/Player')
 
 local Sound = {}
 Sound.__index = Sound
@@ -10,7 +11,7 @@ Sound.soundType = {
 	right = { color = {225, 0, 0} }
 }
 
-Sound.new = function (type, color, player, x, y)
+Sound.new = function (type, x, y)
 	local new = {}
 
 	new.position = Vector.new(x or 0, y or 0)
@@ -35,7 +36,7 @@ Sound.draw = function (self)
 	love.graphics.setColor(self.color)
 	love.graphics.circle('line', self.position.x, self.position.y, self.radius)
 
-	local buttonPos = (self.player.position - self.position):normalize() * self.radius
+	local buttonPos = (Player.position - self.position):normalize() * self.radius
 	love.graphics.circle('fill', buttonPos:unpack(), self.detectionRadius)
 
 	love.graphics.setLineWidth(oldWidth)

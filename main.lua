@@ -6,13 +6,8 @@ local RailEditor = require('editor/RailEditor')
 local ActorBase = require('scripts/ActorBase')
 local ActorEditor = require('editor/ActorEditor')
 
-local Gravity = require('scripts/controllers/Gravity')
-local GamePad = require('scripts/controllers/GamePad')
-local Keyboard = require('scripts/controllers/Keyboard')
-
 local Camera = require('scripts/Camera')
-
-local actor
+local Player = require('scripts/Player')
 
 function love.load()
 	love.graphics.setBackgroundColor(50, 50, 50)
@@ -21,11 +16,7 @@ function love.load()
 		Rail.new(400, 300)
 	end
 
-	actor = ActorBase.new(50, 50)
-	actor:addController(Gravity.new(actor))
-	actor:addController(GamePad.new(actor))
-
-	actor:load()
+	Player:load()
 end
 
 function love.update(dt)
@@ -33,7 +24,7 @@ function love.update(dt)
 
 	RailEditor.update(dt)
 
-	actor:update(dt)
+	Player:update(dt)
 end
 
 function love.draw()
@@ -44,7 +35,7 @@ function love.draw()
 		rail:draw()
 	end
 
-	actor:draw()
+	Player:draw()
 
 	RailEditor.draw()
 	ActorEditor.draw()
