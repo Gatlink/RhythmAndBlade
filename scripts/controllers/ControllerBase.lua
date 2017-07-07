@@ -1,16 +1,18 @@
 local ControllerBase = {}
 ControllerBase.__index = ControllerBase
 
-ControllerBase.new = function ()
+ControllerBase.executionOrder = 0
+
+ControllerBase.new = function (actor)
 	local new = {}
 	new.active = true
-	new.executionOrder = 0
+	new.actor = actor
 
 	setmetatable(new, ControllerBase)
 	return new
 end
 
-ControllerBase.load = function (self, actor) end
-ControllerBase.update = function (self, actor) end
+ControllerBase.load = function (self) end
+ControllerBase.update = function (self) end
 
 return ControllerBase

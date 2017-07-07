@@ -1,19 +1,28 @@
 local ControllerBase = require('scripts/controllers/ControllerBase')
 local Rail = require('scripts/Rail')
 
-local Gravity = ControllerBase.new()
+local Gravity = {}
+Gravity.__index = Gravity
+setmetatable(Gravity, ControllerBase)
 
 Gravity.executionOrder = 1
 
-Gravity.update = function (self, actor)
+Gravity.new = function (actor)
+	local new = ControllerBase.new(actor)
+
+	setmetatable(new, Gravity)
+	return new
+end
+
+Gravity.update = function (self)
 	if not self.active then
-		actor.targetSpeed.y = 0
-		actor.curSpeed.y = 0
-		grounded = true
+		self.actor.targetSpeed.y = 0
+		self.actor.curSpeed.y = 0
+		self.actor.grounded = true
 		return
 	end
 
-	actor:fall();
+	self.actor:fall();
 end
 
 return Gravity

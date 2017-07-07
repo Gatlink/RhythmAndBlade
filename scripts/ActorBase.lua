@@ -113,7 +113,7 @@ ActorBase.update = function (self, dt)
 
 	-- Controllers
 	for _, controller in ipairs(self.controllers) do
-		controller:update(self)
+		controller:update()
 	end
 
 	-- Update

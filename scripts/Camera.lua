@@ -3,7 +3,7 @@ local Keyboard = require('scripts/controllers/Keyboard')
 local Vector = require('scripts/Vector')
 
 local Camera = ActorBase.new(400, 300, true)
-table.insert(Camera.controllers, Keyboard)
+table.insert(Camera.controllers, Keyboard.new(Camera))
 
 Camera.maxSpeed = Vector.new(300, 300)
 Camera.a = 1

@@ -18,13 +18,14 @@ Sound.new = function (type, color, player, x, y)
 	new.player = player
 	new.growthSpeed = 300
 	new.radius = 0
+	new.detectionRadius = 30
 
 	setmetatable(new, Sound)
 	return new
 end
 
 Sound.update = function (self, dt)
-	radisu 
+	self.radius = self.radius + self.growthSpeed * dt
 end
 
 Sound.draw = function (self)
@@ -34,8 +35,8 @@ Sound.draw = function (self)
 	love.graphics.setColor(self.color)
 	love.graphics.circle('line', self.position.x, self.position.y, self.radius)
 
-	local direction = (self.player.position - self.position):normalize() * self.radius
-
+	local buttonPos = (self.player.position - self.position):normalize() * self.radius
+	love.graphics.circle('fill', buttonPos:unpack(), self.detectionRadius)
 
 	love.graphics.setLineWidth(oldWidth)
 end

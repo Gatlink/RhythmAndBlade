@@ -3,36 +3,46 @@ Vector = require('scripts/Vector')
 
 local AXIS_THRESHOLD = 0.5
 
-local GamePad = ControllerBase.new()
-local joystick
-local wasPressed = {}
+local GamePad = {}
+GamePad.__index = GamePad
+setmetatable(GamePad, ControllerBase)
 
-GamePad.load = function (self, actor)
-	local joysticks = love.joystick.getJoysticks()
-	joystick = joysticks[1]
+GamePad.new = function (actor)
+	local new = ControllerBase.new(actor)
+
+	new.joystick = nil
+	new.wasPressed = {}
+
+	setmetatable(new, GamePad)
+	return new
 end
 
-GamePad.update = function (self, actor)
-	if not self.active or not joystick or not joystick:isGamepad() then
-		actor.targetSpeed.x = 0
-		actor.curSpeed.x = 0
+GamePad.load = function (self)
+	local joysticks = love.joystick.getJoysticks()
+	self.joystick = joysticks[1]
+end
+
+GamePad.update = function (self)
+	if not self.active or not self.joystick or not self.joystick:isGamepad() then
+		self.actor.targetSpeed.x = 0
+		self.actor.curSpeed.x = 0
 		return
 	end
 
-	local axis = joystick:getGamepadAxis("leftx")
+	local axis = self.joystick:getGamepadAxis("leftx")
 	local direction = axis < 0 and -1 or 1
 	if math.abs(axis) < AXIS_THRESHOLD then
 		direction = 0
 	end
 
-	actor:run(Vector.new(direction, 0))
+	self.actor:run(Vector.new(direction, 0))
 
-	local isJumpDown = joystick:isDown(1)
-	local justPressedJump = isJumpDown and not wasPressed[1]
-	if actor.grounded and justPressedJump then
-		actor:jump()
+	local isJumpDown = self.joystick:isDown(1)
+	local justPressedJump = isJumpDown and not self.wasPressed[1]
+	if self.actor.grounded and justPressedJump then
+		self.actor:jump()
 	end
-	wasPressed[1] = isJumpDown
+	self.wasPressed[1] = isJumpDown
 end
 
 return GamePad

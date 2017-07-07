@@ -22,8 +22,8 @@ function love.load()
 	end
 
 	actor = ActorBase.new(50, 50)
-	actor:addController(Gravity)
-	actor:addController(GamePad)
+	actor:addController(Gravity.new(actor))
+	actor:addController(GamePad.new(actor))
 
 	actor:load()
 end
