@@ -37,8 +37,7 @@ ActorBase.new = function (x, y, unlist)
 	return new
 end
 
--- Utility
-
+-- UTILS
 ActorBase.move = function (self, dx, dy)
 	self.position:add_inplace(dx, dy)
 	self.railConnector:add_inplace(dx, dy)
@@ -62,7 +61,6 @@ ActorBase.addController = function (self, controller)
 end
 
 -- ACTIONS
-
 ActorBase.fall = function (self)
 	local railProj = Rail.getRailProjection(self.position)
 	if self.jumpTimer <= 0 and self.railConnector:sqrdistance(railProj) <= self.railAttraction ^ 2 then
@@ -95,7 +93,6 @@ ActorBase.playSound = function (self, type)
 end
 
 -- LOVE CALLBACKS
-
 ActorBase.load = function (self)
 	for _, controller in ipairs(self.controllers) do
 		controller:load(self)

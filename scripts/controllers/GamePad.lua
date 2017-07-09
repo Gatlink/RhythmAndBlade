@@ -4,6 +4,8 @@ local GamePad = {}
 GamePad.__index = GamePad
 setmetatable(GamePad, ControllerBase)
 
+GamePad.defenseMapping = {}
+
 GamePad.new = function (actor)
 	local new = ControllerBase.new(actor)
 
@@ -17,6 +19,11 @@ end
 GamePad.load = function (self)
 	local joysticks = love.joystick.getJoysticks()
 	self.joystick = joysticks[1]
+
+	self.defenseMapping[Sound.soundTypes.up] = 'y'
+	self.defenseMapping[Sound.soundTypes.down] = 'a'
+	self.defenseMapping[Sound.soundTypes.left] = 'x'
+	self.defenseMapping[Sound.soundTypes.right] = 'b'
 end
 
 GamePad.update = function (self)
@@ -33,13 +40,25 @@ GamePad.update = function (self)
 	end
 
 	self.actor:run(Vector.new(direction, 0))
-
-	local isJumpDown = self.joystick:isDown(1)
-	local justPressedJump = isJumpDown and not self.wasPressed[1]
-	if self.actor.grounded and justPressedJump then
-		self.actor:jump()
+	
+	if self.actor.defend ~= nil then
+		self.actor:defend(self.joystick:getGamepadAxis("triggerright") > AXIS_THRESHOLD)
 	end
-	self.wasPressed[1] = isJumpDown
+
+	if self.actor.defenseActivated and self.actor.defend and self.actor.defendAgainst then
+		for _, sound in pairs(Sound.soundTypes) do
+			if self.joystick:isGamepadDown(self.defenseMapping[sound]) then
+				self.actor:defendAgainst(sound)
+			end
+		end
+	else
+		local isJumpDown = self.joystick:isGamepadDown('a')
+		local justPressedJump = isJumpDown and not self.wasPressed[1]
+		if self.actor.grounded and justPressedJump then
+			self.actor:jump()
+		end
+		self.wasPressed[1] = isJumpDown
+	end
 end
 
 return GamePad
