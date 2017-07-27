@@ -26,6 +26,8 @@ ActorBase.new = function (x, y, unlist)
 	new.jumpDuration = 0.5
 	new.jumpTimer = 0
 
+	new.wallSlideFactor = 0.1
+
 	new.controllers = {}
 
 	setmetatable(new, ActorBase)
@@ -75,6 +77,11 @@ ActorBase.fall = function (self)
 
 	if self.jumpTimer <= 0 and not self.grounded then
 		self.targetSpeed.y = self.maxSpeed.y
+
+		local walls = Rail.getAllCollidingWalls(self.position, self.radius + 1)
+		if # walls > 0 then
+			self.targetSpeed.y = self.targetSpeed.y * self.wallSlideFactor
+		end
 	end
 end
 

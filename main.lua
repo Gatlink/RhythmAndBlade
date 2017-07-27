@@ -34,7 +34,7 @@ function love.load()
 	Player:load()
 
 	soundEmitter = ActorBase.new(200, 50)
-	soundEmitter:addController(PlaySoundContinuously.new(soundEmitter))
+	-- soundEmitter:addController(PlaySoundContinuously.new(soundEmitter))
 
 	soundEmitter:load()
 end
