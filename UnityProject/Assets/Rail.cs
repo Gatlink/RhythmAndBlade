@@ -12,6 +12,7 @@ public class Rail : MonoBehaviour
     public static readonly Color IDLECOLOR = new Color(0.4f, 0.4f, 0.5f);
     public static readonly Color ACTIVECOLOR = new Color(0.4f, 0.5f, 0.7f);
     public static readonly Color SELECTEDCOLOR = new Color(0.5f, 0.8f, 1f);
+    public static readonly Color WALLCOLOR = new Color(0.7f, 0.5f, 0.4f);
     public static readonly Color NEWCOLOR = new Color(0.5f, 0.8f, 1f, 0.5f);
 
     [HideInInspector, SerializeField]
@@ -129,44 +130,54 @@ public class Rail : MonoBehaviour
 
     public void DrawHandles(bool editable = false)
     {
-        Handles.color = Selection.activeTransform == transform ? ACTIVECOLOR : IDLECOLOR;
-        var newPoints = new List<Vector3>();
+        var baseColor = Selection.activeTransform == transform ? ACTIVECOLOR : IDLECOLOR;
+        Handles.color = baseColor;
+
+        // Lines
         for (var i = 0; i < points.Count; ++i)
         {
             var cur = transform.position + points[i];
-
             if (i + 1 < points.Count)
             {
                 var next = transform.position + points[i + 1];
+                if (next.x == cur.x) Handles.color = WALLCOLOR;
                 Handles.DrawLine(cur, next);
+                if (next.x == cur.x) Handles.color = baseColor;
             }
-            
+        }
+
+        // New Point
+        var newList = new List<Vector3>();
+        var newIndex = -1;
+        var newPoint = Vector3.zero;
+        if (editable)
+            newPoint = DisplayNewPoint(out newIndex);
+
+        // Points
+        Handles.color = baseColor;
+        for (var i = 0; i < points.Count; ++i)
+        {
+            var cur = transform.position + points[i];
             if (editable)
             {
                 if (DrawPointHandle(ref cur))
-                    newPoints.Add(cur);
+                    newList.Add(cur);
             }
             else
             {
                 Handles.DrawSolidDisc(cur, Vector3.forward, GIZMORADIUS);
-                newPoints.Add(points[i]);
+                newList.Add(points[i]);
             }
         }
 
-        // Display new Point
-        if (editable)
+        if (newIndex != -1)
         {
-            int newIndex;
-            var newPoint = DisplayNewPoint(out newIndex);
-            if (newIndex != -1)
-            {
-                newPoints.Insert(newIndex, newPoint);
-                Undo.RecordObject(this, "Add new point");
-            }
+            newList.Insert(newIndex, newPoint);
+            Undo.RecordObject(this, "Add new point");
         }
 
         points.Clear();
-        points.AddRange(newPoints);
+        points.AddRange(newList);
     }
 
     private Vector3 DisplayNewPoint(out int newIndex)
@@ -185,10 +196,10 @@ public class Rail : MonoBehaviour
         {
             GetPreviousAndNextPoint(position, out prev, out next);
             if ((prev == -1 || next == -1) && points.Count > 1)
-                prev = Vector2.Distance(points[0], position) > Vector2.Distance(points[points.Count - 1], position) ? points.Count - 1 : 0;
+                prev = next = Vector2.Distance(points[0], position) > Vector2.Distance(points[points.Count - 1], position) ? points.Count - 1 : 0;
 
             if (prev == -1)
-                prev = 0;
+                prev = next = 0;
         }
 
         switch (Event.current.type)
@@ -224,7 +235,7 @@ public class Rail : MonoBehaviour
         case EventType.MouseDown:
             if (addKeyDown && Event.current.button == 0)
             {
-                newIndex = prev > 0 ? prev + 1 : prev;
+                newIndex = next == 0 ? 0 : prev + 1;
                 Event.current.Use();
                 return position;
             }
@@ -243,9 +254,7 @@ public class Rail : MonoBehaviour
         switch (Event.current.GetTypeForControl(id))
         {
         case EventType.MouseDown:
-            if (Event.current.button != 0)
-                break;
-            
+            if (Event.current.button != 0) break;
             if (HandleUtility.nearestControl == id)
             {
                 GUIUtility.hotControl = id;
@@ -259,9 +268,7 @@ public class Rail : MonoBehaviour
             break;
 
         case EventType.MouseUp:
-            if (Event.current.button != 0)
-                    break;
-            
+            if (Event.current.button != 0) break;
             if (GUIUtility.hotControl == id && Event.current.button == 0)
             {
                 GUIUtility.hotControl = 0;
@@ -302,7 +309,6 @@ public class Rail : MonoBehaviour
             Handles.matrix = Matrix4x4.identity;
             Handles.DrawSolidDisc(position, Vector3.forward, GIZMORADIUS);
             Handles.matrix = cachedMatrix;
-
             Handles.color = currentColour;
             break;
 
