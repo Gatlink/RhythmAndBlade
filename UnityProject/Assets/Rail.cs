@@ -128,46 +128,33 @@ public class Rail : MonoBehaviour
             DrawHandles();
     }
 
-    public void DrawHandles(bool editable = false)
+    private void DrawHandles()
     {
-        var baseColor = Selection.activeTransform == transform ? ACTIVECOLOR : IDLECOLOR;
-        Handles.color = baseColor;
+        Handles.color = IDLECOLOR;
+        
+        DrawLines();
 
-        // Lines
         for (var i = 0; i < points.Count; ++i)
         {
             var cur = transform.position + points[i];
-            if (i + 1 < points.Count)
-            {
-                var next = transform.position + points[i + 1];
-                if (next.x == cur.x) Handles.color = WALLCOLOR;
-                Handles.DrawLine(cur, next);
-                if (next.x == cur.x) Handles.color = baseColor;
-            }
+            Handles.DrawSolidDisc(cur, Vector3.forward, GIZMORADIUS);
         }
+    }
 
-        // New Point
+    public void DrawHandlesEditable()
+    {
+        Handles.color = ACTIVECOLOR;
+        DrawLines();
+
         var newList = new List<Vector3>();
         var newIndex = -1;
-        var newPoint = Vector3.zero;
-        if (editable)
-            newPoint = DisplayNewPoint(out newIndex);
+        var newPoint = DisplayNewPoint(out newIndex);
 
-        // Points
-        Handles.color = baseColor;
         for (var i = 0; i < points.Count; ++i)
         {
             var cur = transform.position + points[i];
-            if (editable)
-            {
-                if (DrawPointHandle(ref cur))
-                    newList.Add(cur);
-            }
-            else
-            {
-                Handles.DrawSolidDisc(cur, Vector3.forward, GIZMORADIUS);
-                newList.Add(points[i]);
-            }
+            if (DrawPointHandle(ref cur))
+                newList.Add(cur);
         }
 
         if (newIndex != -1)
@@ -178,6 +165,22 @@ public class Rail : MonoBehaviour
 
         points.Clear();
         points.AddRange(newList);
+    }
+
+    private void DrawLines()
+    {
+        var oldColor = Handles.color;
+        for (var i = 0; i < points.Count - 1; ++i)
+        {
+            var cur = transform.position + points[i];
+            var next = transform.position + points[i + 1];
+            
+            if (next.x == cur.x)
+                Handles.color = WALLCOLOR;
+            
+            Handles.DrawLine(cur, next);
+            Handles.color = oldColor;
+        }
     }
 
     private Vector3 DisplayNewPoint(out int newIndex)

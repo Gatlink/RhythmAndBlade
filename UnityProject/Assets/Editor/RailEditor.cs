@@ -12,6 +12,6 @@ public class RailEditor : Editor
 
 	public void OnSceneGUI()
 	{
-		rail.DrawHandles(true);
+		rail.DrawHandlesEditable();
 	}
 }
