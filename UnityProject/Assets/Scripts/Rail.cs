@@ -15,6 +15,41 @@ public class Rail : MonoBehaviour
     public static readonly Color WALLCOLOR = new Color(0.7f, 0.5f, 0.4f);
     public static readonly Color NEWCOLOR = new Color(0.5f, 0.8f, 1f, 0.5f);
 
+
+#region STATIC
+
+    public static readonly List<Rail> all = new List<Rail>();
+
+    public static bool GetRailProjection(Vector3 pos, out Vector3 result)
+    {
+        result = Vector3.zero;
+        var points = new List<Vector3>();
+        foreach (var rail in Rail.all)
+        {
+            Vector3 onRail;
+            if (rail.GetClosestPointOnRail(pos, out onRail))
+                points.Add(onRail);
+        }
+
+        if (points.Count == 0)
+            return false;
+
+        var lastDis = float.MaxValue;
+        foreach (var p in points)
+        {
+            var curDis = Vector2.SqrMagnitude(p - pos);
+            if (curDis < lastDis)
+            {
+                result = p;
+                lastDis = curDis;
+            }
+        }
+
+        return true;
+    }
+
+#endregion
+
     [HideInInspector, SerializeField]
     public List<Vector3> points;
 
@@ -26,6 +61,11 @@ public class Rail : MonoBehaviour
         points.Clear();
         points.Add(new Vector2(-1, 0));
         points.Add(new Vector2(1, 0));
+    }
+
+    public void Awake()
+    {
+        all.Add(this);
     }
 
     public bool GetProjection(int idx, Vector3 pos, out Vector3 proj)
