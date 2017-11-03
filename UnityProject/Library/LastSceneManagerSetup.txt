@@ -1,4 +1,7 @@
 sceneSetups:
-- path: Assets/main.unity
+- path: Assets/Corridor1.unity
   isLoaded: 1
   isActive: 1
+- path: Assets/Corridor1_art.unity
+  isLoaded: 1
+  isActive: 0
