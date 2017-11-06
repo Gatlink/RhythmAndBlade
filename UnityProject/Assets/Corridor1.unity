@@ -320,12 +320,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   railConnector: {fileID: 259812918}
   horizontalMovement:
-    acceleration: 0.2
+    acceleration: 0.1
     maxSpeed: 4
   applyGravity: 1
   falling:
     acceleration: 0.1
     maxSpeed: -10
+  desiredVelocity: {x: 0, y: 0}
 --- !u!4 &1639884479
 Transform:
   m_ObjectHideFlags: 0

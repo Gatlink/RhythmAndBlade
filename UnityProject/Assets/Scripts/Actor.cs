@@ -28,13 +28,19 @@ public class Actor : MonoBehaviour
 	[Space]
 	public bool applyGravity = true;
 	public SpeedData falling;
+	
+	[HideInInspector]
+	public Vector2 desiredVelocity = new Vector2();
 
-	private Vector2 currentVelocity;
+	private GamepadController controller;
+	private Vector2 currentVelocity = new Vector2();
 
 	public void Start()
 	{
 		if (railConnector == null)
 			railConnector = transform;
+
+		controller = new GamepadController(this);
 	}
 
 	public void Update()
@@ -42,7 +48,9 @@ public class Actor : MonoBehaviour
 		Vector3 railProj;
 		var hasProj = Rail.GetRailProjection(railConnector.position, out railProj);
 
-		var desiredVelocity = Vector2.zero;
+		desiredVelocity.Set(0f, 0f);
+		controller.Update();
+
 		currentVelocity.x = horizontalMovement.UpdateVelocity(currentVelocity.x, desiredVelocity.x);
 		currentVelocity.y = applyGravity ? falling.UpdateVelocity(currentVelocity.y, falling.maxSpeed) : 0f;
 
