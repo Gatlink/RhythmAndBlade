@@ -23,17 +23,37 @@ public class Actor : MonoBehaviour
 		}
 	}
 
+	[System.Serializable]
+	public class JumpParameter
+	{
+		public float duration = 0.2f;
+		public float verticalSpeed = 5f;
+		public float horizontalSpeedFactor = 0.5f;
+	}
+
 	public Transform railConnector;
 	public SpeedData horizontalMovement;
 	[Space]
 	public bool applyGravity = true;
 	public SpeedData falling;
+	[Space]
+	public JumpParameter jumpParameters;
 	
 	[HideInInspector]
 	public Vector2 desiredVelocity = new Vector2();
+	[HideInInspector]
+	public Vector2 currentVelocity = new Vector2();
 
 	private GamepadController controller;
-	private Vector2 currentVelocity = new Vector2();
+	private ActorState currentState;
+
+
+// PROPERTY
+
+	public bool IsGrounded { get; private set; }
+
+
+// UNITY MESSAGES
 
 	public void Start()
 	{
@@ -41,6 +61,7 @@ public class Actor : MonoBehaviour
 			railConnector = transform;
 
 		controller = new GamepadController(this);
+		TransitionTo<StateNormal>();
 	}
 
 	public void Update()
@@ -50,14 +71,31 @@ public class Actor : MonoBehaviour
 
 		desiredVelocity.Set(0f, 0f);
 		controller.Update();
+		currentState.Update();
 
 		currentVelocity.x = horizontalMovement.UpdateVelocity(currentVelocity.x, desiredVelocity.x);
-		currentVelocity.y = applyGravity ? falling.UpdateVelocity(currentVelocity.y, falling.maxSpeed) : 0f;
+		if (applyGravity)
+			currentVelocity.y = falling.UpdateVelocity(currentVelocity.y, falling.maxSpeed);
 
 		transform.position = (Vector2) transform.position + currentVelocity * Time.deltaTime;
 
 		CheckGround(hasProj, railProj);
 	}
+
+
+// FSM
+
+	public void TransitionTo<T>() where T : ActorState, new()
+	{
+		if (currentState != null)
+			currentState.OnExit();
+		
+		currentState = new T();
+		currentState.OnEnter(this);
+	}
+
+
+// UTILITY
 
 	private void CheckGround(bool hasProj, Vector3 projection)
 	{
@@ -66,6 +104,53 @@ public class Actor : MonoBehaviour
 			var delta = projection.y - railConnector.position.y;
 			transform.position = transform.position + Vector3.up * delta;
 			currentVelocity.y = 0f;
+			IsGrounded = true;
 		}
+		else
+			IsGrounded = false;
+	}
+}
+
+public abstract class ActorState
+{
+	protected Actor actor;
+
+	public virtual void OnEnter(Actor parent) { actor = parent; }
+	public virtual void Update() {}
+	public virtual void OnExit() {}
+}
+
+public class StateNormal : ActorState {}
+
+public class StateJump : ActorState
+{
+	private float startTime;
+
+	public override void OnEnter(Actor parent)
+	{
+		base.OnEnter(parent);
+
+		if (!actor.IsGrounded)
+		{
+			actor.TransitionTo<StateNormal>();
+			return;
+		}
+
+		actor.applyGravity = false;
+		startTime = Time.time;
+	}
+
+	public override void Update()
+	{
+		actor.desiredVelocity.x *= actor.jumpParameters.horizontalSpeedFactor;
+		actor.currentVelocity.y = actor.jumpParameters.verticalSpeed;
+
+		if (Time.time >= startTime + actor.jumpParameters.duration)
+			actor.TransitionTo<StateNormal>();
+	}
+
+	public override void OnExit()
+	{
+		actor.applyGravity = true;
 	}
 }

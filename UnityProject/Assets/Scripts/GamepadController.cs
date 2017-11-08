@@ -16,5 +16,8 @@ public class GamepadController
 		var axis = Input.GetAxis("Horizontal");
 		axis = Mathf.Abs(axis) <= AXIS_DEADZONE ? 0f : Mathf.Sign(axis);
 		actor.desiredVelocity.x = axis * actor.horizontalMovement.maxSpeed;
+
+		if (Input.GetButtonDown("Jump"))
+			actor.TransitionTo<StateJump>();
 	}
 }
