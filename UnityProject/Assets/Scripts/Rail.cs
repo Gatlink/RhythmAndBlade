@@ -16,7 +16,7 @@ public class Rail : MonoBehaviour
     public static readonly Color NEWCOLOR = new Color(0.5f, 0.8f, 1f, 0.5f);
 
 
-#region STATIC
+// STATIC
 
     public static readonly List<Rail> all = new List<Rail>();
 
@@ -48,7 +48,18 @@ public class Rail : MonoBehaviour
         return true;
     }
 
-#endregion
+    public static IEnumerable<float> GetAllCollidingWalls(Vector3 pos, float radius)
+    {
+        foreach (var rail in all)
+        {
+            var collidingWalls = rail.GetCollidingWalls(pos, radius);
+            foreach (var wall in collidingWalls)
+                yield return wall;
+        }
+    }
+
+
+// METHODS
 
     [HideInInspector, SerializeField]
     public List<Vector3> points;
@@ -151,6 +162,29 @@ public class Rail : MonoBehaviour
         }
 
         return result;
+    }
+
+    private IEnumerable<float> GetCollidingWalls(Vector3 pos, float radius)
+    {
+        if (points.Count < 2)
+            yield break;
+
+        for (var i = 0; i < points.Count - 1; ++i)
+        {
+            var prev = points[i] + transform.position;
+            var next = points[i + 1] + transform.position;
+            if (prev.x != next.x)
+                continue;
+
+            var wall = prev.x;
+            if (wall < pos.x - radius || wall > pos.x + radius)
+                continue;
+            
+            var maxY = Mathf.Max(prev.y, next.y);
+            var minY = Mathf.Min(prev.y, next.y);
+            if (maxY > pos.y && minY < pos.y)
+                yield return wall;
+        }
     }
 
 #if UNITY_EDITOR

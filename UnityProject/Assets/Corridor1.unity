@@ -318,11 +318,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71be7d340da27804ea4e204f62e1d566, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  railConnector: {fileID: 259812918}
+  ignoreCollisions: 0
+  collisionRadius: 0.4
   horizontalMovement:
     acceleration: 0.1
     maxSpeed: 8
-  applyGravity: 1
+  ignoreGravity: 0
+  railConnector: {fileID: 259812918}
   falling:
     acceleration: 0.1
     maxSpeed: -15

@@ -31,10 +31,12 @@ public class Actor : MonoBehaviour
 		public float horizontalSpeedFactor = 0.5f;
 	}
 
-	public Transform railConnector;
+	public bool ignoreCollisions;
+	public float collisionRadius = 1f;
 	public SpeedData horizontalMovement;
 	[Space]
-	public bool applyGravity = true;
+	public bool ignoreGravity;
+	public Transform railConnector;
 	public SpeedData falling;
 	[Space]
 	public JumpParameter jumpParameters;
@@ -74,14 +76,22 @@ public class Actor : MonoBehaviour
 		currentState.Update();
 
 		currentVelocity.x = horizontalMovement.UpdateVelocity(currentVelocity.x, desiredVelocity.x);
-		if (applyGravity)
+		if (!ignoreGravity)
 			currentVelocity.y = falling.UpdateVelocity(currentVelocity.y, falling.maxSpeed);
 
 		transform.position = (Vector2) transform.position + currentVelocity * Time.deltaTime;
 
 		CheckGround(hasProj, railProj);
+		CheckCollisions();
 	}
 
+#if UNITY_EDITOR
+	public void OnDrawGizmos()
+	{
+		Gizmos.color = Color.red;
+		Gizmos.DrawWireSphere(transform.position, collisionRadius);
+	}
+#endif
 
 // FSM
 
@@ -108,6 +118,24 @@ public class Actor : MonoBehaviour
 		}
 		else
 			IsGrounded = false;
+	}
+
+	private void CheckCollisions()
+	{
+		if (ignoreCollisions)
+			return;
+
+		foreach (var wall in Rail.GetAllCollidingWalls(transform.position, collisionRadius))
+		{
+			var offset = 0f;
+			if (transform.position.x > wall)
+				offset = wall - (transform.position.x - collisionRadius);
+			else
+				offset = wall - (transform.position.x + collisionRadius);
+
+			currentVelocity.x = 0f;
+			transform.position += Vector3.right * offset;
+		}
 	}
 }
 
@@ -136,7 +164,7 @@ public class StateJump : ActorState
 			return;
 		}
 
-		actor.applyGravity = false;
+		actor.ignoreGravity = true;
 		startTime = Time.time;
 	}
 
@@ -151,6 +179,6 @@ public class StateJump : ActorState
 
 	public override void OnExit()
 	{
-		actor.applyGravity = true;
+		actor.ignoreGravity = false;
 	}
 }
