@@ -321,14 +321,14 @@ MonoBehaviour:
   railConnector: {fileID: 259812918}
   horizontalMovement:
     acceleration: 0.1
-    maxSpeed: 4
+    maxSpeed: 8
   applyGravity: 1
   falling:
     acceleration: 0.1
-    maxSpeed: -10
+    maxSpeed: -15
   jumpParameters:
     duration: 0.2
-    verticalSpeed: 5
+    verticalSpeed: 10
     horizontalSpeedFactor: 0.5
   desiredVelocity: {x: 0, y: 0}
   currentVelocity: {x: 0, y: 0}
@@ -375,8 +375,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   points:
+  - {x: -6.9630823, y: 11.100772, z: 0}
   - {x: -6.9630823, y: 0.09442747, z: 0}
-  - {x: 7.0063663, y: 0.06540859, z: 0}
+  - {x: 15.594894, y: 0.827942, z: 0}
+  - {x: 15.594894, y: 2.7348232, z: 0}
+  - {x: 26.85205, y: 2.5341463, z: 0}
+  - {x: 31.54765, y: 0.24654746, z: 0}
+  - {x: 45.714706, y: -0.2350645, z: 0}
+  - {x: 45.714706, y: 10.88186, z: 0}
 --- !u!4 &2055659820
 Transform:
   m_ObjectHideFlags: 0
