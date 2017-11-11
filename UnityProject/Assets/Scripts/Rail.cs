@@ -48,14 +48,17 @@ public class Rail : MonoBehaviour
         return true;
     }
 
-    public static IEnumerable<float> GetAllCollidingWalls(Vector3 pos, float radius)
+    public static List<float> GetAllCollidingWalls(Vector3 pos, float radius)
     {
+        var walls = new List<float>();
         foreach (var rail in all)
         {
             var collidingWalls = rail.GetCollidingWalls(pos, radius);
             foreach (var wall in collidingWalls)
-                yield return wall;
+                walls.Add(wall);
         }
+
+        return walls;
     }
 
 
@@ -164,10 +167,11 @@ public class Rail : MonoBehaviour
         return result;
     }
 
-    private IEnumerable<float> GetCollidingWalls(Vector3 pos, float radius)
+    private List<float> GetCollidingWalls(Vector3 pos, float radius)
     {
+        var result = new List<float>();
         if (points.Count < 2)
-            yield break;
+            return result;
 
         for (var i = 0; i < points.Count - 1; ++i)
         {
@@ -183,8 +187,10 @@ public class Rail : MonoBehaviour
             var maxY = Mathf.Max(prev.y, next.y);
             var minY = Mathf.Min(prev.y, next.y);
             if (maxY > pos.y && minY < pos.y)
-                yield return wall;
+                result.Add(wall);
         }
+
+        return result;
     }
 
 #if UNITY_EDITOR
