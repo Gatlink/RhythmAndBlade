@@ -66,6 +66,7 @@ public class Actor : MonoBehaviour
 // PROPERTY
 
 	public bool IsGrounded { get; private set; }
+	public float Direction { get; private set; }
 
 
 // UNITY MESSAGES
@@ -77,6 +78,8 @@ public class Actor : MonoBehaviour
 
 		controller = new GamepadController(this);
 		TransitionTo<StateNormal>();
+		CameraController.instance.target = this;
+		Direction = 1f;
 	}
 
 	public void Update()
@@ -89,6 +92,9 @@ public class Actor : MonoBehaviour
 		currentState.Update();
 
 		currentVelocity.x = horizontalMovement.UpdateVelocity(currentVelocity.x, desiredVelocity.x);
+		if (currentVelocity.x != 0f)
+			Direction = Mathf.Sign(currentVelocity.x);
+		
 		if (!ignoreGravity)
 			currentVelocity.y = falling.UpdateVelocity(currentVelocity.y, falling.maxSpeed);
 
