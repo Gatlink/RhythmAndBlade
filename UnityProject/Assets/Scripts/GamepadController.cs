@@ -17,7 +17,10 @@ public class GamepadController
 		axis = Mathf.Abs(axis) <= AXIS_DEADZONE ? 0f : Mathf.Sign(axis);
 		actor.desiredVelocity.x = axis * actor.horizontalMovement.maxSpeed;
 
-		if (actor.IsGrounded && Input.GetButtonDown("Jump"))
-			actor.TransitionTo<StateJump>();
+		if (Input.GetButtonDown("Jump"))
+			actor.Jump();
+
+		if (Input.GetButtonDown("Dash"))
+			actor.TransitionTo<StateDash>();
 	}
 }

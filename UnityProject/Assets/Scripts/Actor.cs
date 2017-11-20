@@ -41,6 +41,12 @@ public class Actor : MonoBehaviour
 		public float gravityFactor = 0.1f;
 	}
 
+	[System.Serializable]
+	public class DashParameters
+	{
+		public float speed = 10f;
+	}
+
 // PARAMETERS
 	public bool ignoreCollisions;
 	public float collisionRadius = 1f;
@@ -53,6 +59,8 @@ public class Actor : MonoBehaviour
 	public JumpParameter jumpParameters;
 	[Space]
 	public WallSlideParameter wallSlideParameters;
+	[Space]
+	public DashParameters dashParameters;
 	
 	[HideInInspector]
 	public Vector2 desiredVelocity = new Vector2();
@@ -129,6 +137,12 @@ public class Actor : MonoBehaviour
 
 
 // UTILITY
+
+	public void Jump()
+	{
+		if (IsGrounded)
+			TransitionTo<StateJump>();
+	}
 
 	private void CheckGround(bool hasProj, Vector3 projection)
 	{
@@ -234,5 +248,30 @@ public class StateWallSlide : ActorState
 	public override void OnExit()
 	{
 		actor.falling.factor /= actor.wallSlideParameters.gravityFactor;
+	}
+}
+
+public class StateDash : ActorState
+{
+	private bool oldIgnoreGravity;
+
+	public override void OnEnter(Actor parent)
+	{
+		base.OnEnter(parent);
+
+		actor.currentVelocity.x = actor.dashParameters.speed * actor.Direction;
+		oldIgnoreGravity = actor.ignoreGravity;
+		actor.ignoreGravity = true;
+	}
+
+	public override void Update()
+	{
+		if (actor.currentVelocity.x == 0f)
+			actor.TransitionTo<StateNormal>();
+	}
+
+	public override void OnExit()
+	{
+		actor.ignoreGravity = oldIgnoreGravity;
 	}
 }

@@ -170,5 +170,7 @@ MonoBehaviour:
     horizontalSpeedFactor: 0.5
   wallSlideParameters:
     gravityFactor: 0.1
+  dashParameters:
+    speed: 50
   desiredVelocity: {x: 0, y: 0}
   currentVelocity: {x: 0, y: 0}
