@@ -48,6 +48,8 @@ public class Actor : MonoBehaviour
 	}
 
 // PARAMETERS
+	private const float RAIL_STICKINESS = 0.1f;
+
 	public bool ignoreCollisions;
 	public float collisionRadius = 1f;
 	public SpeedData horizontalMovement;
@@ -146,9 +148,9 @@ public class Actor : MonoBehaviour
 
 	private void CheckGround(bool hasProj, Vector3 projection)
 	{
-		if (hasProj && projection.y > railConnector.position.y)
+		var delta = projection.y - railConnector.position.y;
+		if (hasProj && (projection.y > railConnector.position.y || Mathf.Abs(delta) <= RAIL_STICKINESS))
 		{
-			var delta = projection.y - railConnector.position.y;
 			transform.position = transform.position + Vector3.up * delta;
 			currentVelocity.y = 0f;
 			IsGrounded = true;
