@@ -72,6 +72,14 @@ public class Actor : MonoBehaviour
 	private GamepadController controller;
 	private ActorState currentState;
 
+#if UNITY_EDITOR
+	// private Vector2[] prevPositions = new Vector2[256];
+	// private int prevPosFirst = 0;
+	// private int prevPosCount = 0;
+
+	private readonly List<Vector2> prevPositions = new List<Vector2>();
+#endif
+
 
 // PROPERTY
 
@@ -112,6 +120,12 @@ public class Actor : MonoBehaviour
 
 		CheckGround(hasProj, railProj);
 		CheckCollisions();
+
+#if UNITY_EDITOR
+		prevPositions.Add(transform.position);
+		if (prevPositions.Count > 256)
+			prevPositions.RemoveAt(0);
+#endif
 	}
 
 #if UNITY_EDITOR
@@ -119,6 +133,9 @@ public class Actor : MonoBehaviour
 	{
 		Gizmos.color = Color.red;
 		Gizmos.DrawWireSphere(transform.position, collisionRadius);
+
+		for (var i = 0; i < prevPositions.Count - 1; ++i)
+			Gizmos.DrawLine(prevPositions[i], prevPositions[i + 1]);
 	}
 #endif
 
@@ -256,14 +273,19 @@ public class StateWallSlide : ActorState
 public class StateDash : ActorState
 {
 	private bool oldIgnoreGravity;
+	private float oldFactor;
 
 	public override void OnEnter(Actor parent)
 	{
 		base.OnEnter(parent);
 
 		actor.currentVelocity.x = actor.dashParameters.speed * actor.Direction;
+		
 		oldIgnoreGravity = actor.ignoreGravity;
 		actor.ignoreGravity = true;
+		
+		oldFactor = actor.horizontalMovement.factor;
+		actor.horizontalMovement.factor = 0f;
 	}
 
 	public override void Update()
@@ -275,5 +297,37 @@ public class StateDash : ActorState
 	public override void OnExit()
 	{
 		actor.ignoreGravity = oldIgnoreGravity;
+		actor.horizontalMovement.factor = oldFactor;
+	}
+}
+
+public class StateAttack : ActorState
+{
+	private bool oldIgnoreGravity;
+	private float oldFactor;
+
+	public override void OnEnter(Actor parent)
+	{
+		base.OnEnter(parent);
+
+		actor.currentVelocity.x = actor.dashParameters.speed * actor.Direction;
+		
+		oldIgnoreGravity = actor.ignoreGravity;
+		actor.ignoreGravity = true;
+		
+		oldFactor = actor.horizontalMovement.factor;
+		actor.horizontalMovement.factor = 0f;
+	}
+
+	public override void Update()
+	{
+		if (actor.currentVelocity.x == 0f)
+			actor.TransitionTo<StateNormal>();
+	}
+
+	public override void OnExit()
+	{
+		actor.ignoreGravity = oldIgnoreGravity;
+		actor.horizontalMovement.factor = oldFactor;
 	}
 }
