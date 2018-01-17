@@ -68,14 +68,15 @@ public class Actor : MonoBehaviour
 	public Vector2 desiredVelocity = new Vector2();
 	[HideInInspector]
 	public Vector2 currentVelocity = new Vector2();
+	[HideInInspector]
+	public Animator animator;
 
 	private GamepadController controller;
 	private ActorState currentState;
 
 #if UNITY_EDITOR
-	// private Vector2[] prevPositions = new Vector2[256];
-	// private int prevPosFirst = 0;
-	// private int prevPosCount = 0;
+	[Space]
+	public bool showTrajectory = true;
 
 	private readonly List<Vector2> prevPositions = new List<Vector2>();
 #endif
@@ -98,6 +99,8 @@ public class Actor : MonoBehaviour
 		TransitionTo<StateNormal>();
 		CameraController.instance.target = this;
 		Direction = 1f;
+
+		animator = GetComponentInChildren<Animator>();
 	}
 
 	public void Update()
@@ -121,7 +124,13 @@ public class Actor : MonoBehaviour
 		CheckGround(hasProj, railProj);
 		CheckCollisions();
 
+		if (animator != null)
+			animator.SetFloat("HorizontalSpeed", Mathf.Abs(currentVelocity.x / horizontalMovement.maxSpeed));
+
 #if UNITY_EDITOR
+		if (!showTrajectory)
+			return;
+
 		prevPositions.Add(transform.position);
 		if (prevPositions.Count > 256)
 			prevPositions.RemoveAt(0);
@@ -134,7 +143,7 @@ public class Actor : MonoBehaviour
 		Gizmos.color = Color.red;
 		Gizmos.DrawWireSphere(transform.position, collisionRadius);
 
-		for (var i = 0; i < prevPositions.Count - 1; ++i)
+		for (var i = 0; showTrajectory &&  i < prevPositions.Count - 1; ++i)
 			Gizmos.DrawLine(prevPositions[i], prevPositions[i + 1]);
 	}
 #endif
@@ -229,6 +238,8 @@ public class StateJump : ActorState
 
 		if (!actor.IsGrounded)
 			actor.TransitionTo<StateNormal>();
+		else if (actor.animator != null)
+			actor.animator.SetTrigger("Jump");
 	}
 
 	public override void Update()
@@ -256,6 +267,8 @@ public class StateWallSlide : ActorState
 		
 		if (actor.IsGrounded)
 			actor.TransitionTo<StateNormal>();
+		else if (actor.animator != null)
+			actor.animator.SetBool("WallSlide", true);
 	}
 
 	public override void Update()
@@ -267,6 +280,9 @@ public class StateWallSlide : ActorState
 	public override void OnExit()
 	{
 		actor.falling.factor /= actor.wallSlideParameters.gravityFactor;
+		
+		if (actor.animator != null)
+			actor.animator.SetBool("WallSlide", false);
 	}
 }
 
@@ -286,6 +302,9 @@ public class StateDash : ActorState
 		
 		oldFactor = actor.horizontalMovement.factor;
 		actor.horizontalMovement.factor = 0f;
+
+		if (actor.animator != null)
+			actor.animator.SetTrigger("Dash");
 	}
 
 	public override void Update()
