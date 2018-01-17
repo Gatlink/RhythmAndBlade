@@ -125,7 +125,10 @@ public class Actor : MonoBehaviour
 		CheckCollisions();
 
 		if (animator != null)
+		{
+			animator.SetBool("Grounded", IsGrounded);
 			animator.SetFloat("HorizontalSpeed", Mathf.Abs(currentVelocity.x / horizontalMovement.maxSpeed));
+		}
 
 #if UNITY_EDITOR
 		if (!showTrajectory)
