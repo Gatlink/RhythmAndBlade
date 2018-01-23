@@ -124,6 +124,13 @@ public class Actor : MonoBehaviour
 		CheckGround(hasProj, railProj);
 		CheckCollisions();
 
+		var scale = transform.localScale;
+		if (currentVelocity.x > 0)
+			scale.x = 1;
+		else if (currentVelocity.x < 0)
+			scale.x = -1;
+		transform.localScale = scale;
+
 		if (animator != null)
 		{
 			animator.SetBool("Grounded", IsGrounded);
