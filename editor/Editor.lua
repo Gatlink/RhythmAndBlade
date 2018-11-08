@@ -17,7 +17,10 @@ Editor.load = function ()
 	local data, length = love.filesystem.read('save0')
 
 	if length == 0 or data == nil then
-		return false
+		-- return false
+
+		-- gross hack so the example level is loaded even if it doesn't exists.
+		data = '19,21;19,274;119,274;239,331;369,331;369,282;469,282;567,315;679,315;679,201;\n'
 	end
 
 	for line in string.gmatch(data, '(%S+)%s') do
