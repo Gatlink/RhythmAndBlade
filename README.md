@@ -4,13 +4,13 @@ This is the first prototype, made in Lua, where you can play and edit your level
 
 # Controls
 
-<!---%=play%-->
+## play
 Play with a Xbox 360 controller (has not been tested with other types of controller):
 - Left stick to move
 - A to jump
 - Hold down the right trigger and use the A, B, X and Y button at the right moment to avoid the waves.
 
-<!---%=Edit%-->
+## Edit
 Level edition is done through the keyboard and mouse.
 - click on a point to select it
 - press delete to remove it
