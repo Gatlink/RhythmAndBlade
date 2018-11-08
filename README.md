@@ -5,6 +5,7 @@ This is the first prototype, made in Lua, where you can play and edit your level
 # Controls
 
 ## play
+Only playable on window. Just double click on 'launch.bat' to launch the game.
 Play with a Xbox 360 controller (has not been tested with other types of controller):
 - Left stick to move
 - A to jump
@@ -12,6 +13,7 @@ Play with a Xbox 360 controller (has not been tested with other types of control
 
 ## Edit
 Level edition is done through the keyboard and mouse.
+- use the arrow keys to move the camera
 - click on a point to select it
 - press delete to remove it
 - click and drag on a point to move it
